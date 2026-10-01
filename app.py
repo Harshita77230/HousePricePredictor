@@ -2,10 +2,7 @@
 app.py  —  Flask Web Frontend for House Price Predictor
 Run:  python app.py   then open  http://127.0.0.1:5000
 """
-import os, sys
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
+import os
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -15,9 +12,11 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-MODEL_PATH = "models/best_model.pkl"
+# Resolve model path relative to this file so it works in any CWD (incl. Vercel)
+_BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(_BASE_DIR, "models", "best_model.pkl")
 
-# Load model once at startup
+# Load model once at startup — fail loudly so the error surfaces in logs
 _data       = joblib.load(MODEL_PATH)
 _pipeline   = _data["pipeline"]
 _model_name = _data["model_name"]

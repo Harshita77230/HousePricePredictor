@@ -14,10 +14,8 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
-# Generated / large binary files
+# Generated data and outputs (re-created by training)
 data/*.csv
-models/*.pkl
-models/*.joblib
 outputs/*.png
 outputs/*.jpg
 
