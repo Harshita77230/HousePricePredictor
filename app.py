@@ -2,19 +2,24 @@
 app.py  —  Flask Web Frontend for House Price Predictor
 Run:  python app.py   then open  http://127.0.0.1:5000
 """
-import os
 import warnings
 warnings.filterwarnings("ignore")
 
+from pathlib import Path
 import joblib
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
 
-app = Flask(__name__)
+# Project root is always the directory that contains this file (app.py).
+# Using Path(__file__).resolve() is safe regardless of CWD or how the module
+# is imported (directly, via api/index.py, or by a Vercel serverless runtime).
+_BASE_DIR = Path(__file__).resolve().parent
 
-# Resolve model path relative to this file so it works in any CWD (incl. Vercel)
-_BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(_BASE_DIR, "models", "best_model.pkl")
+# Pin the template folder explicitly so Flask finds it even when this module
+# is imported from a sub-package (e.g. api/index.py on Vercel).
+app = Flask(__name__, template_folder=str(_BASE_DIR / "templates"))
+
+MODEL_PATH = _BASE_DIR / "models" / "best_model.pkl"
 
 # Load model once at startup — fail loudly so the error surfaces in logs
 _data       = joblib.load(MODEL_PATH)
